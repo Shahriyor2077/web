@@ -1,0 +1,43 @@
+import type { IContract } from "./contract";
+
+export interface ICustomer {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  passportSeries: string;
+  phoneNumber: string;
+  // percent: number;
+  address: string;
+  birthDate: Date;
+  telegramName: string;
+  telegramId: string;
+  isActive: boolean;
+  isDeleted: boolean;
+  createdAt: Date;
+  managerId: string;
+  contracts: IContract[];
+  [key: string]: any;
+}
+
+export interface IAddCustomer {
+  firstName: string;
+  lastName: string;
+  passportSeries: string;
+  phoneNumber: string;
+  birthDate: Date;
+  // percent: number;
+  address: string;
+  managerId: string;
+}
+
+export interface IEditCustomer {
+  id: string;
+  firstName: string;
+  lastName: string;
+  passportSeries: string;
+  phoneNumber: string;
+  birthDate: Date;
+  // percent: number;
+  address: string;
+  managerId: string;
+}
