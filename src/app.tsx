@@ -33,7 +33,6 @@ export default function App() {
   if (isLoadingRefresh) {
     return <Loader />;
   }
-  // console.log("app rerender");
 
   return (
     <>
