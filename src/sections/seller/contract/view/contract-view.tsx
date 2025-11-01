@@ -24,8 +24,7 @@ const newColumns: Column[] = [
     id: "price",
     label: "Narxi",
     renderCell: (row) => {
-      const currency = row.currency === "usd" ? "$" : "so'm";
-      return `${row.price.toLocaleString()} ${currency}`;
+      return `${row.price.toLocaleString()} $`;
     },
     sortable: true,
   },
@@ -33,8 +32,7 @@ const newColumns: Column[] = [
     id: "initialPayment",
     label: "Oldindan To'lov",
     renderCell: (row) => {
-      const currency = row.currency === "usd" ? "$" : "so'm";
-      return `${row.initialPayment.toLocaleString} ${currency}`;
+      return `${row.initialPayment.toLocaleString()} $`;
     },
     sortable: true,
   },

@@ -20,12 +20,12 @@ export const columnsCash: Column[] = [
   {
     id: "debtAmount",
     label: "Qarizdorlik summasi",
-    format: (value: number) => `${value.toLocaleString()}`,
+    format: (value: number) => `${value.toLocaleString()} $`,
   },
   {
     id: "paidAmount",
     label: "Undirilgan summa",
-    format: (value: number) => `${value.toLocaleString()}`,
+    format: (value: number) => `${value.toLocaleString()} $`,
   },
 
   { id: "status", label: "Holat", sortable: true },

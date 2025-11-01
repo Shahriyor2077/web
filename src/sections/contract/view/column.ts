@@ -24,13 +24,13 @@ export const columnsPageContract: Column[] = [
   {
     id: "totalPrice",
     label: "Narxi",
-    format: (value: number) => `${value.toLocaleString()}`,
+    format: (value: number) => `${value.toLocaleString()} $`,
     sortable: true,
   },
   {
     id: "initialPayment",
     label: "Oldindan To'lov",
-    format: (value: number) => `${value.toLocaleString()}`,
+    format: (value: number) => `${value.toLocaleString()} $`,
     sortable: true,
   },
 
@@ -38,7 +38,7 @@ export const columnsPageContract: Column[] = [
     id: "monthlyPayment",
     label: "Oylik To'lov Miqdori",
     align: "center",
-    format: (value: number) => `${value.toLocaleString()} `,
+    format: (value: number) => `${value.toLocaleString()} $`,
     sortable: true,
   },
   // {

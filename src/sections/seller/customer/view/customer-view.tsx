@@ -82,10 +82,9 @@ const columns: Column[] = [
     sortable: true,
     format: (value: any) => (value ? `${value}` : "—"),
   },
-
   {
     id: "passportSeries",
-    label: "Password seriya",
+    label: "Passport seriya",
     sortable: true,
     format: (value: any) => (value ? `${value}` : "—"),
   },
@@ -104,8 +103,6 @@ const columns: Column[] = [
       row.manager
         ? `${row.manager.firstName} ${row.manager.lastName || "_"}`
         : "—",
-    // format: (value: any) =>
-    //   value && value.firstName ? `${value.firstName} ${value.lastName}` : "—",
   },
 ];
 

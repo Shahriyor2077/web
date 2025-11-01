@@ -13,19 +13,19 @@ export const columnsDebtor: Column[] = [
   {
     id: "totalPrice",
     label: "Umumiy narxi",
-    format: (value: number) => `${value.toLocaleString()}`,
+    format: (value: number) => `${value.toLocaleString()} $`,
     sortable: true,
   },
   {
     id: "totalPaid",
     label: "To'langan summa",
-    format: (value: number) => `${value.toLocaleString()}`,
+    format: (value: number) => `${value.toLocaleString()} $`,
     sortable: true,
   },
   {
     id: "remainingDebt",
     label: "Qoldiq summa",
-    format: (value: number) => `${value.toLocaleString()}`,
+    format: (value: number) => `${value.toLocaleString()} $`,
     sortable: true,
   },
   {
@@ -57,25 +57,25 @@ export const columnsContract: Column[] = [
   {
     id: "totalPrice",
     label: "Ummumiy narxi",
-    format: (value: number) => `${value.toLocaleString()}`,
+    format: (value: number) => `${value.toLocaleString()} $`,
     sortable: true,
   },
   {
     id: "initialPayment",
     label: "Oldindan to'lov",
-    format: (value: number) => `${value.toLocaleString()}`,
+    format: (value: number) => `${value.toLocaleString()} $`,
     sortable: true,
   },
   {
     id: "totalPaid",
     label: "To'langan summa",
-    format: (value: number) => `${value.toLocaleString()}`,
+    format: (value: number) => `${value.toLocaleString()} $`,
     sortable: true,
   },
   {
     id: "remainingDebt",
     label: "Qoldiq summa",
-    format: (value: number) => `${value.toLocaleString()}`,
+    format: (value: number) => `${value.toLocaleString()} $`,
     sortable: true,
   },
   {
