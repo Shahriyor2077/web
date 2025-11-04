@@ -45,7 +45,10 @@ import { formatNumber } from "src/utils/format-number";
 import { grey } from "src/theme/core";
 import { setCustomer } from "src/store/slices/customerSlice";
 import { setModal, closeModal } from "src/store/slices/modalSlice";
-import { addContractSeller } from "src/store/actions/contractActions";
+import {
+  addContractSeller,
+  updateSellerContract,
+} from "src/store/actions/contractActions";
 import { getSelectCustomers } from "src/store/actions/customerActions";
 
 import { Iconify } from "src/components/iconify";
@@ -126,6 +129,48 @@ const ModalContract = () => {
 
   const [formValues, setFormValues] = useState<IForm>(defaultFormValues);
 
+  // Edit rejimida ma'lumotlarni yuklash
+  useEffect(() => {
+    if (contractModal?.type === "edit" && contractModal?.data) {
+      const contractData = contractModal.data;
+
+      // Customer ma'lumotlarini yuklash
+      if (typeof contractData.customer === "object" && contractData.customer) {
+        dispatch(setCustomer(contractData.customer));
+      }
+
+      setFormValues({
+        customer:
+          typeof contractData.customer === "string"
+            ? contractData.customer
+            : contractData.customer?._id,
+        productName: contractData.productName || "",
+        originalPrice: contractData.originalPrice || 0,
+        price: contractData.price || 0,
+        initialPayment: contractData.initialPayment || 0,
+        percentage: contractData.percentage || 30,
+        period: contractData.period || 12,
+        initialPaymentDueDate:
+          contractData.initialPaymentDueDate?.split("T")[0] ||
+          defaultInitialDate.toISOString().split("T")[0],
+        monthlyPayment: contractData.monthlyPayment || 0,
+        notes: contractData.notes || "",
+        box: contractData.info?.box || false,
+        mbox: contractData.info?.mbox || false,
+        receipt: contractData.info?.receipt || false,
+        iCloud: contractData.info?.iCloud || false,
+        totalPrice: contractData.totalPrice || 0,
+        remainingAmount: contractData.remainingDebt || 0,
+        profitPrice: 0,
+        startDate:
+          contractData.startDate?.split("T")[0] ||
+          now.toISOString().split("T")[0],
+        paymentDeadline: defaultEndDate.toISOString().split("T")[0],
+      });
+      setIsTouched(false);
+    }
+  }, [contractModal, defaultInitialDate, defaultEndDate, now, dispatch]);
+
   const filterOptions = createFilterOptions<ICustomer>({
     limit: 3,
     stringify: (option: ICustomer) =>
@@ -197,7 +242,17 @@ const ModalContract = () => {
         ...formValues,
         id: contract.data?._id,
       };
-      dispatch(addContractSeller(formJson as unknown as IAddContract));
+
+      if (contractModal?.type === "edit" && contractModal?.data?._id) {
+        dispatch(
+          updateSellerContract({
+            ...formJson,
+            id: contractModal.data._id,
+          } as any)
+        );
+      } else {
+        dispatch(addContractSeller(formJson as unknown as IAddContract));
+      }
 
       handleClose();
     },
@@ -272,7 +327,11 @@ const ModalContract = () => {
       fullWidth
       fullScreen={fullScreen}
     >
-      <DialogTitle>Yangi Mahsulot Shartnomasi</DialogTitle>
+      <DialogTitle>
+        {contractModal?.type === "edit"
+          ? "Shartnomani tahrirlash"
+          : "Yangi Mahsulot Shartnomasi"}
+      </DialogTitle>
       <DialogContent sx={{ p: { xs: 1, md: 2 } }}>
         <Grid container spacing={1}>
           <Grid xs={12} my={2}>

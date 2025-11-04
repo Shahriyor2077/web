@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import type { FC } from "react";
 import type { RootState } from "src/store";
+import type { IAddCustomer } from "src/types/customer";
 
 import { useSelector } from "react-redux";
 import { useState, useEffect, useCallback } from "react";
@@ -27,6 +28,7 @@ import { useAppDispatch } from "src/hooks/useAppDispatch";
 
 import authApi from "src/server/auth";
 import { closeModal } from "src/store/slices/modalSlice";
+import { setCustomer } from "src/store/slices/customerSlice";
 import {
   addCustomerSeller,
   updateCustomerSeller,
@@ -129,25 +131,15 @@ const ModalCustomer: FC<IProps> = ({ show = false }) => {
     }));
   };
 
-  // Telefon tekshiruvi - edit rejimida o'zgarmagan bo'lsa tekshirmaslik
   useEffect(() => {
     const phone = formValues.phoneNumber;
-    const isEditMode = customerModal?.type === "edit";
-    const originalPhone = customerModal?.data?.phoneNumber;
-
-    // Edit rejimida va telefon o'zgarmagan bo'lsa, tekshirmaslik
-    if (isEditMode && phone === originalPhone) {
-      setPhoneError(false);
-      setPhoneHelper("");
-      setChecking(false);
-      return;
-    }
 
     if (/^\+998\d{9}$/.test(phone)) {
       setChecking(true);
       setPhoneError(false);
       setPhoneHelper("");
 
+      // Simulyatsiya: telefonni tekshirish uchun API chaqiruv
       const checkPhone = async () => {
         try {
           console.log("res", phone);
@@ -161,7 +153,7 @@ const ModalCustomer: FC<IProps> = ({ show = false }) => {
           }
         } catch (err) {
           setPhoneError(true);
-          setPhoneHelper("Server bilan bog'lanishda xatolik");
+          setPhoneHelper("Server bilan bog‘lanishda xatolik");
         } finally {
           setChecking(false);
         }
@@ -172,28 +164,18 @@ const ModalCustomer: FC<IProps> = ({ show = false }) => {
       setPhoneError(false);
       setPhoneHelper("");
     }
-  }, [formValues.phoneNumber, customerModal]);
+  }, [formValues.phoneNumber]);
 
   const handlePhoneBlur = () => {
     const phone = formValues.phoneNumber;
     if (!/^\+998\d{9}$/.test(phone)) {
       setPhoneError(true);
-      setPhoneHelper("Telefon raqam to'liq va +998 bilan boshlanishi kerak");
+      setPhoneHelper("Telefon raqam to‘liq va +998 bilan boshlanishi kerak");
     }
   };
 
-  // Passport tekshiruvi - edit rejimida o'zgarmagan bo'lsa tekshirmaslik
   useEffect(() => {
     const passport = formValues.passportSeries;
-    const isEditMode = customerModal?.type === "edit";
-    const originalPassport = customerModal?.data?.passportSeries;
-
-    // Edit rejimida va passport o'zgarmagan bo'lsa, tekshirmaslik
-    if (isEditMode && passport === originalPassport) {
-      setPassportError(false);
-      setPassportHelper("");
-      return;
-    }
 
     if (/^[A-Z]{2}\d{7}$/.test(passport)) {
       const checkPassport = async () => {
@@ -210,7 +192,7 @@ const ModalCustomer: FC<IProps> = ({ show = false }) => {
           }
         } catch (err) {
           setPassportError(true);
-          setPassportHelper("Server bilan bog'lanishda xatolik");
+          setPassportHelper("Server bilan bog‘lanishda xatolik");
         }
       };
 
@@ -219,7 +201,7 @@ const ModalCustomer: FC<IProps> = ({ show = false }) => {
       setPassportError(false);
       setPassportHelper("");
     }
-  }, [formValues.passportSeries, customerModal]);
+  }, [formValues.passportSeries]);
 
   const handlePassportBlur = () => {
     const passport = formValues.passportSeries;
@@ -227,7 +209,7 @@ const ModalCustomer: FC<IProps> = ({ show = false }) => {
     if (!/^[A-Z]{2}\d{7}$/.test(passport)) {
       setPassportError(true);
       setPassportHelper(
-        "2 ta harf va 7 ta raqamdan iborat bo'lishi kerak (masalan: AA1234567)"
+        "2 ta harf va 7 ta raqamdan iborat bo‘lishi kerak (masalan: AA1234567)"
       );
     }
   };
@@ -245,6 +227,7 @@ const ModalCustomer: FC<IProps> = ({ show = false }) => {
       photoFile: null,
     });
     dispatch(closeModal("customerModal"));
+    // setCustomer(null) ni olib tashladik - modal yopilganda customer ma'lumotlari saqlanadi
   }, [dispatch]);
 
   const handleSubmit = useCallback(
@@ -338,6 +321,23 @@ const ModalCustomer: FC<IProps> = ({ show = false }) => {
               </Grid>
               <Grid xs={12} md={4}>
                 <TextField
+                  // value={formValues.passportSeries}
+                  // onChange={handleChange}
+                  // margin="dense"
+                  // id="passportSeries"
+                  // name="passportSeries"
+                  // label="Passport seriyasi"
+                  // fullWidth
+                  // error={
+                  //   formValues.passportSeries.length > 0 &&
+                  //   !/^[A-Z]{2}\d{7}$/.test(formValues.passportSeries)
+                  // }
+                  // helperText={
+                  //   formValues.passportSeries.length > 0 &&
+                  //   !/^[A-Z]{2}\d{7}$/.test(formValues.passportSeries)
+                  //     ? "2 ta harf va 7 ta raqamdan iborat bo'lishi kerak (masalan: AA1234567)"
+                  //     : ""
+                  // }
                   value={formValues.passportSeries}
                   onChange={handleChange}
                   onBlur={handlePassportBlur}
@@ -355,6 +355,30 @@ const ModalCustomer: FC<IProps> = ({ show = false }) => {
               </Grid>
               <Grid xs={12} md={4}>
                 <TextField
+                  // value={formValues.phoneNumber}
+                  // onChange={handleChange}
+                  // required
+                  // margin="dense"
+                  // id="phoneNumber"
+                  // name="phoneNumber"
+                  // label="Telefon raqam"
+                  // fullWidth
+                  // error={
+                  //   formValues.phoneNumber.length > 0 &&
+                  //   !/^\+998\d{9}$/.test(formValues.phoneNumber)
+                  // }
+                  // helperText={
+                  //   formValues.phoneNumber.length > 0 &&
+                  //   !/^\+998\d{9}$/.test(formValues.phoneNumber)
+                  //     ? "Telefon raqam to'liq kiriting"
+                  //     : ""
+                  // }
+                  // inputProps={{
+                  //   // inputMode: "numeric",
+                  //   // pattern: "[0-9]*",
+                  //   maxLength: 13,
+                  //   minLength: 13,
+                  // }}
                   value={formValues.phoneNumber}
                   onChange={handlePhoneChange}
                   onBlur={handlePhoneBlur}

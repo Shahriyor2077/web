@@ -20,7 +20,11 @@ import { useAppDispatch } from "src/hooks/useAppDispatch";
 import authApi from "src/server/auth";
 import { setModal } from "src/store/slices/modalSlice";
 import { DashboardContent } from "src/layouts/dashboard";
-import { setCustomers, setNewCustomers } from "src/store/slices/customerSlice";
+import {
+  setCustomers,
+  setNewCustomers,
+  setCustomerId,
+} from "src/store/slices/customerSlice";
 
 import { Iconify } from "src/components/iconify";
 import Loader from "src/components/loader/Loader";
@@ -197,11 +201,23 @@ const CustomerView = () => {
         </Box>
 
         <CustomTabPanel value={tab} index={0}>
-          <CustomerTable data={customers} columns={columns} />
+          <CustomerTable
+            data={customers}
+            columns={columns}
+            onRowClick={(row) => {
+              dispatch(setCustomerId(row._id));
+            }}
+          />
         </CustomTabPanel>
 
         <CustomTabPanel value={tab} index={1}>
-          <CustomerTable data={newCustomers} columns={columns} />
+          <CustomerTable
+            data={newCustomers}
+            columns={columns}
+            onRowClick={(row) => {
+              dispatch(setCustomerId(row._id));
+            }}
+          />
         </CustomTabPanel>
       </Stack>
     </DashboardContent>

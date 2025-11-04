@@ -15,7 +15,13 @@ export interface ICustomer {
   isDeleted: boolean;
   createdAt: Date;
   managerId: string;
-  contracts: IContract[];
+  manager?: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+  };
+  contracts?: IContract[];
   files?: {
     passport?: string;
     shartnoma?: string;

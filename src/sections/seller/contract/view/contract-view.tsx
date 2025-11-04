@@ -10,6 +10,7 @@ import { useAppDispatch } from "src/hooks/useAppDispatch";
 
 import { setModal } from "src/store/slices/modalSlice";
 import { DashboardContent } from "src/layouts/dashboard";
+import { setContractId } from "src/store/slices/contractSlice";
 import {
   getSellerActiveContracts,
   getSellerNewContracts,
@@ -128,7 +129,13 @@ const ContractsView = () => {
         />
       </Tabs>
 
-      <ContractTable data={getCurrentData()} columns={columns} />
+      <ContractTable
+        data={getCurrentData()}
+        columns={columns}
+        onRowClick={(row) => {
+          dispatch(setContractId(row._id));
+        }}
+      />
     </DashboardContent>
   );
 };

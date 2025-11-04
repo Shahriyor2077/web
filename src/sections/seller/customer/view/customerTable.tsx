@@ -8,12 +8,20 @@ import { GenericTable } from "src/components/table/GnericTable";
 interface CustomerTableProps {
   data: ICustomer[];
   columns: Column[];
+  onRowClick?: (row: ICustomer) => void;
 }
 
-const CustomerTable = ({ data, columns }: CustomerTableProps) => {
+const CustomerTable = ({ data, columns, onRowClick }: CustomerTableProps) => {
   const logic = useTableLogic<ICustomer>(data, columns);
 
-  return <GenericTable data={data} columns={columns} logic={logic} />;
+  return (
+    <GenericTable
+      data={data}
+      columns={columns}
+      logic={logic}
+      onRowClick={onRowClick}
+    />
+  );
 };
 
 export default CustomerTable;

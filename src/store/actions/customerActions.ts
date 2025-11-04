@@ -410,3 +410,50 @@ export const addCustomerSeller =
       }
     }
   };
+
+export const updateCustomerSeller =
+  (id: string, data: IEditCustomer | FormData): AppThunk =>
+  async (dispatch) => {
+    dispatch(start());
+    try {
+      const res = await authApi.put(`/seller/customer/${id}`, data, {
+        headers: {
+          "Content-Type":
+            data instanceof FormData
+              ? "multipart/form-data"
+              : "application/json",
+        },
+      });
+      // Seller uchun customer ma'lumotlarini qayta yuklash
+      const customerRes = await authApi.get(`/seller/customer/get-one/${id}`);
+      dispatch(setCustomer(customerRes.data));
+      dispatch(success());
+      dispatch(
+        enqueueSnackbar({
+          message: res.data.message,
+          options: { variant: "success" },
+        })
+      );
+    } catch (error: any) {
+      dispatch(failure());
+      const errorMessage =
+        error.response?.data?.message || "Tizimda xatolik ketdi";
+      const errorMessages: string[] = error.response?.data?.errors || [];
+      dispatch(
+        enqueueSnackbar({
+          message: errorMessage,
+          options: { variant: "error" },
+        })
+      );
+      if (Array.isArray(errorMessages)) {
+        errorMessages.forEach((err) => {
+          dispatch(
+            enqueueSnackbar({
+              message: err,
+              options: { variant: "error" },
+            })
+          );
+        });
+      }
+    }
+  };

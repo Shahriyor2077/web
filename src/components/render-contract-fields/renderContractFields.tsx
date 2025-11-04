@@ -60,11 +60,13 @@ const ReadOnlyTextField = ({ value, label }: IReadOnlyTextFieldProps) => (
 interface IProps {
   contract: IContract;
   showName?: boolean;
+  readOnly?: boolean;
 }
 
 const RenderContractFields: React.FC<IProps> = ({
   contract,
   showName = false,
+  readOnly = false,
 }) => {
   const dispatch = useAppDispatch();
   const { paymentDeadline } = useMemo(() => {
@@ -87,20 +89,22 @@ const RenderContractFields: React.FC<IProps> = ({
         mb={2}
       >
         <Typography variant="h6">Shartnoma ma&#39;lumotlari</Typography>
-        <IconButton
-          aria-label="update"
-          size="small"
-          onClick={() => {
-            dispatch(
-              setModal({
-                modal: "contractModal",
-                data: { type: "edit", data: contract },
-              })
-            );
-          }}
-        >
-          <Iconify icon="solar:pen-bold" />
-        </IconButton>
+        {!readOnly && (
+          <IconButton
+            aria-label="update"
+            size="small"
+            onClick={() => {
+              dispatch(
+                setModal({
+                  modal: "contractModal",
+                  data: { type: "edit", data: contract },
+                })
+              );
+            }}
+          >
+            <Iconify icon="solar:pen-bold" />
+          </IconButton>
+        )}
       </Stack>
 
       {showName && (

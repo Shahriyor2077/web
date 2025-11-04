@@ -1,6 +1,6 @@
 import type { RootState } from "src/store";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 import Grid from "@mui/material/Unstable_Grid2";
@@ -17,14 +17,23 @@ import Loader from "src/components/loader/Loader";
 import CustomerInfo from "src/components/customer-infos/customerInfo";
 import { PaymentSchedule } from "src/components/payment-schedule";
 import PayCommentModal from "src/components/render-payment-history/pay-comment-modal";
+import RenderContractFields from "src/components/render-contract-fields/renderContractFields";
 
 const ContractDetails = () => {
   const dispatch = useAppDispatch();
   const [selectedComment, setSelectedComment] = useState("");
-  const { contract, isLoading } = useSelector(
+  const { contract, isLoading, contractId } = useSelector(
     (state: RootState) => state.contract
   );
   const { customer } = useSelector((state: RootState) => state.customer);
+
+  // Shartnoma ochilganda ma'lumotlarni qayta yuklash
+  useEffect(() => {
+    if (contractId) {
+      console.log("Loading seller contract:", contractId);
+      dispatch(getSellerContract(contractId));
+    }
+  }, [contractId, dispatch]);
 
   if (!contract && isLoading) {
     return <Loader />;
@@ -54,7 +63,20 @@ const ContractDetails = () => {
           </Paper>
         </Grid>
 
-        <Grid xs={12}>
+        <Grid xs={12} md={6}>
+          {contract && (
+            <Paper
+              elevation={3}
+              sx={{ p: 2, display: "flex", flexDirection: "column", gap: 2 }}
+            >
+              <Grid container spacing={1}>
+                <RenderContractFields contract={contract} showName />
+              </Grid>
+            </Paper>
+          )}
+        </Grid>
+
+        <Grid xs={12} md={6}>
           {contract && (
             <PaymentSchedule
               startDate={contract.startDate}

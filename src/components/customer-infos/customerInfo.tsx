@@ -46,7 +46,7 @@ const CustomerInfo: FC<IProps> = ({ customer, top = false }) => {
     (state: RootState) => state.employee
   );
   const currentManager = customer?.manager
-    ? managers.find((manager) => manager._id === customer.manager._id)
+    ? managers.find((manager) => manager._id === customer.manager?._id)
     : null;
 
   const [selectedManager, setSelectedManager] = useState<
@@ -59,7 +59,7 @@ const CustomerInfo: FC<IProps> = ({ customer, top = false }) => {
 
   useEffect(() => {
     if (customer?.manager) {
-      const manager = managers.find((m) => m._id === customer.manager._id);
+      const manager = managers.find((m) => m._id === customer.manager?._id);
       setSelectedManager(manager || null);
     } else {
       setSelectedManager(null);
@@ -130,6 +130,7 @@ const CustomerInfo: FC<IProps> = ({ customer, top = false }) => {
               getOptionLabel={(option) =>
                 `${option.firstName} ${option.lastName}`
               }
+              isOptionEqualToValue={(option, value) => option._id === value._id}
               loading={isLoading}
               loadingText="Yuklanmoqda..."
               noOptionsText="Menejer topilmadi"
@@ -238,22 +239,23 @@ const CustomerInfo: FC<IProps> = ({ customer, top = false }) => {
               <ListItemText
                 primary="Mas'ul menejer"
                 secondary={
-                  <Box sx={{ display: "inline-block", p: 0 }}>
-                    <Chip
-                      avatar={<Avatar src={undefined} />}
-                      label={`${customer?.manager?.firstName || "___"} ${customer?.manager?.lastName || "___"}`}
-                      variant="outlined"
-                      sx={{ mt: 1, cursor: "pointer", m: 0 }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (customer?.manager._id) {
-                          dispatch(setEmployeeId(customer?.manager?._id));
-                          navigate("/admin/employee");
-                        }
-                      }}
-                    />
-                  </Box>
+                  <Chip
+                    avatar={<Avatar src={undefined} />}
+                    label={`${customer?.manager?.firstName || "___"} ${customer?.manager?.lastName || "___"}`}
+                    variant="outlined"
+                    sx={{ mt: 1, cursor: "pointer" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (customer?.manager?._id) {
+                        dispatch(setEmployeeId(customer?.manager?._id));
+                        navigate("/admin/employee");
+                      }
+                    }}
+                  />
                 }
+                secondaryTypographyProps={{
+                  component: "div",
+                }}
               />
             </ListItem>
           </List>

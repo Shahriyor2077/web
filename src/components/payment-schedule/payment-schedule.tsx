@@ -96,8 +96,11 @@ const PaymentSchedule: FC<PaymentScheduleProps> = ({
       const paymentDate = addMonths(start, i);
 
       // Agar qolgan to'langan summa oylik to'lovdan katta yoki teng bo'lsa, bu oy to'langan
-      const isPaid = remainingPaid >= monthlyPayment;
+      // 0.01 qo'shamiz - kichik hisob-kitob xatoliklarini hisobga olish uchun
+      const isPaid = remainingPaid >= monthlyPayment - 0.01;
+
       if (isPaid) {
+        // Har bir to'langan oydan oylik to'lovni ayiramiz
         remainingPaid -= monthlyPayment;
       }
 
