@@ -205,26 +205,43 @@ const ModalContractEdit = () => {
 
     setIsSubmitting(true);
 
-    try {
-      const response = await authApi.put("/contract", {
-        id: contract._id,
+    const payload = {
+      id: contract._id,
+      monthlyPayment: formValues.monthlyPayment,
+      initialPayment: formValues.initialPayment,
+      totalPrice: formValues.totalPrice,
+      // Keep other fields unchanged
+      customer: contract.customer?._id,
+      productName: contract.productName,
+      originalPrice: contract.originalPrice,
+      price: contract.price,
+      percentage: contract.percentage,
+      period: contract.period,
+      initialPaymentDueDate: contract.initialPaymentDueDate,
+      notes: contract.notes,
+      box: contract.info?.box || false,
+      mbox: contract.info?.mbox || false,
+      receipt: contract.info?.receipt || false,
+      iCloud: contract.info?.iCloud || false,
+    };
+
+    console.log("🚀 Sending contract update:", {
+      contractId: contract._id,
+      oldValues: {
+        monthlyPayment: contract.monthlyPayment,
+        initialPayment: contract.initialPayment,
+        totalPrice: contract.totalPrice,
+      },
+      newValues: {
         monthlyPayment: formValues.monthlyPayment,
         initialPayment: formValues.initialPayment,
         totalPrice: formValues.totalPrice,
-        // Keep other fields unchanged
-        customer: contract.customer?._id,
-        productName: contract.productName,
-        originalPrice: contract.originalPrice,
-        price: contract.price,
-        percentage: contract.percentage,
-        period: contract.period,
-        initialPaymentDueDate: contract.initialPaymentDueDate,
-        notes: contract.notes,
-        box: contract.info?.box || false,
-        mbox: contract.info?.mbox || false,
-        receipt: contract.info?.receipt || false,
-        iCloud: contract.info?.iCloud || false,
-      });
+      },
+      payload,
+    });
+
+    try {
+      const response = await authApi.put("/contract", payload);
 
       const result: ContractEditResponse = response.data;
 

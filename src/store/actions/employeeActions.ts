@@ -241,16 +241,43 @@ export const closeExpense =
   };
 
 export const withdrawFromBalance =
-  (employeeId: string, currencyDetails: CurrencyDetails): AppThunk =>
+  (
+    employeeId: string,
+    currencyDetails: CurrencyDetails,
+    notes?: string
+  ): AppThunk =>
   async (dispatch) => {
     try {
+      console.log("💰 Withdrawing from balance:", {
+        employeeId,
+        currencyDetails,
+        notes,
+      });
+
       await authApi.put("/employee/withdraw", {
         _id: employeeId,
         currencyDetails,
+        notes: notes || "Balansdan pul yechib olindi",
       });
-      // Agar kerak bo‘lsa, yangilangan ma'lumotlarni chaqiring:
+
+      dispatch(
+        enqueueSnackbar({
+          message: "Pul muvaffaqiyatli yechib olindi",
+          options: { variant: "success" },
+        })
+      );
+
+      // Yangilangan ma'lumotlarni yuklash
       dispatch(getEmployee(employeeId));
-    } catch (error) {
+      dispatch(getExpenses(employeeId, 1, 10));
+    } catch (error: any) {
       console.error("Yechishda xatolik:", error);
+      dispatch(
+        enqueueSnackbar({
+          message:
+            error.response?.data?.message || "Pul yechishda xatolik yuz berdi",
+          options: { variant: "error" },
+        })
+      );
     }
   };

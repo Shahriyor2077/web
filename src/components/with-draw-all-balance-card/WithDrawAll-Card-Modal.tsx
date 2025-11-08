@@ -29,7 +29,7 @@ const balanceFields: readonly {
   label: string;
   currency: "so'm" | "$";
 }[] = [
-  { key: "sum", label: "Naqt so‘m", currency: "so'm" },
+  { key: "sum", label: "Naqt so'm", currency: "so'm" },
   { key: "dollar", label: "Naqt dollar", currency: "$" },
 ];
 
@@ -43,6 +43,7 @@ const WithdrawAllBalanceCard: FC<Props> = ({ employee }) => {
     {}
   );
   const [showControls, setShowControls] = useState(false);
+  const [notes, setNotes] = useState("");
 
   const handleChange = (key: CurrencyKey, value: number) => {
     if (value < 0) return;
@@ -50,7 +51,7 @@ const WithdrawAllBalanceCard: FC<Props> = ({ employee }) => {
     if (value > max) {
       dispatch(
         enqueueSnackbar({
-          message: `${balanceFields.find((f) => f.key === key)?.label} uchun ${max} dan oshirib bo‘lmaydi`,
+          message: `${balanceFields.find((f) => f.key === key)?.label} uchun ${formatNumber(max)} dan oshirib bo'lmaydi`,
           options: { variant: "warning" },
         })
       );
@@ -73,18 +74,48 @@ const WithdrawAllBalanceCard: FC<Props> = ({ employee }) => {
       (acc, val) => Number(acc || 0) + Number(val || 0),
       0 as number
     ) as number;
+
     if (total <= 0) {
       dispatch(
         enqueueSnackbar({
-          message: "Yechilayotgan summa 0 bo‘lishi mumkin emas",
+          message: "Yechilayotgan summa 0 bo'lishi mumkin emas",
           options: { variant: "error" },
         })
       );
       return;
     }
 
-    dispatch(withdrawFromBalance(employee._id, normalizedAmounts));
+    // Balans yetarliligini tekshirish
+    if (normalizedAmounts.dollar > (employee.balance.dollar ?? 0)) {
+      dispatch(
+        enqueueSnackbar({
+          message: `Balansda yetarli dollar yo'q. Mavjud: ${formatNumber(employee.balance.dollar ?? 0)} $`,
+          options: { variant: "error" },
+        })
+      );
+      return;
+    }
+
+    if (normalizedAmounts.sum > (employee.balance.sum ?? 0)) {
+      dispatch(
+        enqueueSnackbar({
+          message: `Balansda yetarli so'm yo'q. Mavjud: ${formatNumber(employee.balance.sum ?? 0)} so'm`,
+          options: { variant: "error" },
+        })
+      );
+      return;
+    }
+
+    console.log("💰 Submitting withdraw:", {
+      employeeId: employee._id,
+      amounts: normalizedAmounts,
+      currentBalance: employee.balance,
+    });
+
+    dispatch(withdrawFromBalance(employee._id, normalizedAmounts, notes));
     setAmounts({});
+    setNotes("");
+    setShowControls(false); // Yechish rejimini o'chirish
   };
 
   return (
@@ -102,7 +133,10 @@ const WithdrawAllBalanceCard: FC<Props> = ({ employee }) => {
               checked={showControls}
               onChange={(e) => {
                 setShowControls(e.target.checked);
-                if (!e.target.checked) setAmounts({});
+                if (!e.target.checked) {
+                  setAmounts({});
+                  setNotes("");
+                }
               }}
             />
           }
@@ -137,7 +171,7 @@ const WithdrawAllBalanceCard: FC<Props> = ({ employee }) => {
                   size="small"
                   onClick={() => handleFullWithdraw(key)}
                 >
-                  To‘liq
+                  To'liq
                 </Button>
               )}
             </Grid>
@@ -148,6 +182,16 @@ const WithdrawAllBalanceCard: FC<Props> = ({ employee }) => {
       {showControls && (
         <>
           <Divider sx={{ my: 2 }} />
+          <TextField
+            fullWidth
+            multiline
+            rows={2}
+            label="Izoh (ixtiyoriy)"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Nima uchun pul yechib olinmoqda?"
+            sx={{ mb: 2 }}
+          />
           <Button variant="contained" fullWidth onClick={handleSubmit}>
             Yechib olish
           </Button>

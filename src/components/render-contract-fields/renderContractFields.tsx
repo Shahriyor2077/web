@@ -135,6 +135,12 @@ const RenderContractFields: React.FC<IProps> = ({
       </Grid>
       <Grid xs={6} md={4}>
         <ReadOnlyTextField
+          value={dateFormat(contract.initialPaymentDueDate)}
+          label="Oldindan to'lov sanasi"
+        />
+      </Grid>
+      <Grid xs={6} md={4}>
+        <ReadOnlyTextField
           value={formatNumber(contract.percentage)}
           label="Foiz"
         />
@@ -167,12 +173,6 @@ const RenderContractFields: React.FC<IProps> = ({
         <ReadOnlyTextField
           value={formatNumber(contract.remainingDebt)}
           label="Qolgan summa"
-        />
-      </Grid>
-      <Grid xs={6} md={4}>
-        <ReadOnlyTextField
-          value={dateFormat(contract.initialPaymentDueDate)}
-          label="Birinchi to'lov sanasi"
         />
       </Grid>
       <Grid xs={6} md={4}>

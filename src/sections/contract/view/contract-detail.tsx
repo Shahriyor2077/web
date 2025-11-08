@@ -17,7 +17,7 @@ import Loader from "src/components/loader/Loader";
 import CustomerInfo from "src/components/customer-infos/customerInfo";
 import { PaymentSchedule } from "src/components/payment-schedule";
 import PayCommentModal from "src/components/render-payment-history/pay-comment-modal";
-import { EditHistoryTimeline } from "src/components/edit-history-timeline";
+import { EditHistory } from "src/components/edit-history";
 
 import Calculate from "./calculate";
 
@@ -36,6 +36,9 @@ const ContractDetails = () => {
       dispatch(getContract(contractId));
     }
   }, [contractId, dispatch]);
+
+  // Customer ma'lumotlarini contract.customer dan olish
+  const contractCustomer = contract?.customer || customer;
 
   // Debug: contract ma'lumotlarini ko'rish
   useEffect(() => {
@@ -72,17 +75,20 @@ const ContractDetails = () => {
       </Box>
 
       <Grid container spacing={3} my={2}>
-        <Grid xs={12} display="flex" flexDirection="column" gap={3}>
-          <Paper elevation={3} sx={{ p: 2, height: "100%" }}>
-            {contract?.customer && <CustomerInfo customer={customer} top />}
+        {/* Mijoz ma'lumotlari */}
+        <Grid xs={12}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            {contract?.customer && (
+              <CustomerInfo customer={contractCustomer} top />
+            )}
           </Paper>
         </Grid>
 
-        <Grid xs={12} md={6}>
-          {contract && <Calculate contract={contract} />}
-        </Grid>
+        {/* Shartnoma ma'lumotlari */}
+        <Grid xs={12}>{contract && <Calculate contract={contract} />}</Grid>
 
-        <Grid xs={12} md={6}>
+        {/* To'lov jadvali */}
+        <Grid xs={12}>
           {contract && (
             <PaymentSchedule
               startDate={contract.startDate}
@@ -95,17 +101,16 @@ const ContractDetails = () => {
               totalPaid={contract.totalPaid}
               payments={contract.payments}
               onPaymentSuccess={() => {
-                // Shartnomani qayta yuklash
                 dispatch(getContract(contract._id));
               }}
             />
           )}
         </Grid>
 
-        {/* Edit History Timeline */}
+        {/* Tahrirlash tarixi */}
         {contract?.editHistory && contract.editHistory.length > 0 && (
           <Grid xs={12}>
-            <EditHistoryTimeline editHistory={contract.editHistory} />
+            <EditHistory editHistory={contract.editHistory} />
           </Grid>
         )}
       </Grid>

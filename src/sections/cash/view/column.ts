@@ -2,33 +2,93 @@ import type { Column } from "src/components/table/types";
 
 export const columnsCash: Column[] = [
   {
-    id: "fullName",
-    label: "Ism-Familiya",
+    id: "customerId",
+    label: "Mijoz",
     sortable: true,
-    // renderCell: (row) => {
-    //   const currency = row.currency === "usd" ? "$" : "so'm";
-    //   return `${row.initialPaymentDueDate} ${row.customerName}`;
-    // },
-    // renderCell: (row) => {
-    //   const day = new Date(row.startDate).getDate(); // faqat kunni oladi
-    //   return `${day} ${row.fullName}`;
-    // },
-  },
-  // { id: "fullName", label: "Ism-Familiya", sortable: true },
-  // { id: "phoneNumber", label: "Telefon raqami", sortable: true },
-  { id: "manager", label: "Menejer", sortable: true },
-  {
-    id: "debtAmount",
-    label: "Qarizdorlik summasi",
-    format: (value: number) => `${value.toLocaleString()} $`,
+    renderCell: (row) => {
+      if (row.customerId) {
+        return `${row.customerId.firstName || ""} ${row.customerId.lastName || ""}`;
+      }
+      return "—";
+    },
   },
   {
-    id: "paidAmount",
-    label: "Undirilgan summa",
-    format: (value: number) => `${value.toLocaleString()} $`,
+    id: "managerId",
+    label: "Menejer",
+    sortable: true,
+    renderCell: (row) => {
+      if (row.managerId) {
+        return `${row.managerId.firstName || ""} ${row.managerId.lastName || ""}`;
+      }
+      return "—";
+    },
   },
+  {
+    id: "amount",
+    label: "Summa",
+    format: (value: number) => `${value?.toLocaleString() || 0} $`,
+  },
+  {
+    id: "date",
+    label: "Sana",
+    renderCell: (row) => {
+      if (row.date) {
+        return new Date(row.date).toLocaleDateString("uz-UZ");
+      }
+      return "—";
+    },
+  },
+  {
+    id: "delayDays",
+    label: "Kechikish",
+    sortable: true,
+    renderCell: (row) => {
+      if (!row.date) return "—";
 
-  { id: "status", label: "Holat", sortable: true },
-  { id: "overdueDays", label: "Kechikish kunlari" },
-  { id: "notes", label: "Izoh", sortable: true },
+      const paymentDate = new Date(row.date);
+      const today = new Date();
+      const delayDays = Math.floor(
+        (today.getTime() - paymentDate.getTime()) / (1000 * 60 * 60 * 24)
+      );
+
+      if (delayDays <= 0) {
+        return "—";
+      }
+
+      // Emoji va rang
+      if (delayDays > 30) {
+        return `🔴 ${delayDays} kun`;
+      } else if (delayDays > 7) {
+        return `🟡 ${delayDays} kun`;
+      }
+      return `${delayDays} kun`;
+    },
+  },
+  {
+    id: "status",
+    label: "Holat",
+    sortable: true,
+    renderCell: (row) => {
+      const statusMap: Record<string, string> = {
+        PENDING: "⏳ Kutilmoqda",
+        PAID: "✅ To'langan",
+        REJECTED: "❌ Rad etilgan",
+        UNDERPAID: "⚠️ Kam to'langan",
+        OVERPAID: "💰 Ko'p to'langan",
+      };
+      return statusMap[row.status] || row.status || "—";
+    },
+  },
+  {
+    id: "notes",
+    label: "Izoh",
+    renderCell: (row) => {
+      if (row.notes && typeof row.notes === "object" && "text" in row.notes) {
+        const text = row.notes.text || "—";
+        // Uzun matnni qisqartirish
+        return text.length > 50 ? text.substring(0, 50) + "..." : text;
+      }
+      return row.notes || "—";
+    },
+  },
 ];

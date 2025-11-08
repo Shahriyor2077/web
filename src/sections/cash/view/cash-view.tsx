@@ -59,7 +59,19 @@ export function CashView() {
     : null;
 
   const filteredCash = managerFullName
-    ? cashs.filter((cash) => cash.manager === managerFullName)
+    ? cashs.filter((cash: any) => {
+        // managerId obyekt bo'lsa (Payment format)
+        if (cash.managerId && typeof cash.managerId === "object") {
+          const cashManagerName =
+            `${cash.managerId.firstName || ""} ${cash.managerId.lastName || ""}`.trim();
+          return cashManagerName === managerFullName;
+        }
+        // Eski format - manager string (Debtor format)
+        if (cash.manager) {
+          return cash.manager === managerFullName;
+        }
+        return false;
+      })
     : cashs;
 
   const ManagerFilter = (

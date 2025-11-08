@@ -101,7 +101,9 @@ const CustomerInfo: FC<IProps> = ({ customer, top = false }) => {
         >
           <Stack direction="row" spacing={2} alignItems="center">
             <Avatar sx={{ width: 50, height: 50 }} alt={customer?.firstName} />
-            <Typography variant="h6">{`${customer?.firstName} ${customer?.lastName}`}</Typography>
+            <Typography variant="h6">
+              {customer?.firstName || "___"} {customer?.lastName || ""}
+            </Typography>
             {customer?.isActive ? (
               <Tooltip title="Tasdiqlangan mijoz" placement="top">
                 <Typography>

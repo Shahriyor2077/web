@@ -2,17 +2,34 @@ import type { Column } from "src/components/table/types";
 
 export const columnsPageContract: Column[] = [
   {
+    id: "day",
+    label: "Kun",
+    sortable: true,
+    renderCell: (row) => {
+      if (row.startDate) {
+        const day = new Date(row.startDate).getDate();
+        return day.toString().padStart(2, "0");
+      }
+      return "—";
+    },
+  },
+  {
     id: "customerName",
     label: "Mijoz",
     sortable: true,
-    // renderCell: (row) => {
-    //   const currency = row.currency === "usd" ? "$" : "so'm";
-    //   return `${row.initialPaymentDueDate} ${row.customerName}`;
-    // },
-    // renderCell: (row) => {
-    //   const day = new Date(row.initialPaymentDueDate).getDate(); // faqat kunni oladi
-    //   return `${day} ${row.customerName}`;
-    // },
+    renderCell: (row) => {
+      // Agar customerName'da kun bor bo'lsa, uni olib tashlash
+      if (row.customerName && typeof row.customerName === "string") {
+        // "08 Behruz Choriyev" -> "Behruz Choriyev"
+        const parts = row.customerName.split(" ");
+        // Agar birinchi qism raqam bo'lsa, uni olib tashlash
+        if (parts.length > 1 && !isNaN(Number(parts[0]))) {
+          return parts.slice(1).join(" ");
+        }
+        return row.customerName;
+      }
+      return row.customerName || "—";
+    },
   },
   { id: "productName", label: "Mahsulot Nomi", sortable: true },
   {

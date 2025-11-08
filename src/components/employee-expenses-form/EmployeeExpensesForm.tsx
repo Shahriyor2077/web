@@ -33,8 +33,23 @@ export const EmployeeExpensesTable = () => {
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(10);
 
+  // Debug: Log state changes
+  useEffect(() => {
+    console.log("📊 Expenses state updated:", {
+      expenses: expenses?.length || 0,
+      expensesMeta,
+      isLoadingExpenses,
+      employeeId,
+    });
+  }, [expenses, expensesMeta, isLoadingExpenses, employeeId]);
+
   useEffect(() => {
     if (employeeId) {
+      console.log("📊 Fetching expenses for employee:", {
+        employeeId,
+        page: page + 1,
+        limit,
+      });
       dispatch(getExpenses(employeeId, page + 1, limit));
     }
   }, [dispatch, employeeId, page, limit]);
